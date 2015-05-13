@@ -62,10 +62,10 @@ class BillboardIter(BillboardDates):
             self.initDate = self.str_to_date(self.initDate)
         self.currentDate = self.initDate
         self.quantizeStart()
+        self.initDate = self.currentDate
 
     def reset(self):
         self.currentDate = self.initDate
-        self.quantizeStart()
 
     def quantizeStart(self):
         '''Quantizes starting date to the closest following Billboard chart'''
