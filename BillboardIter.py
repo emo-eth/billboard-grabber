@@ -21,7 +21,7 @@ class BillboardDates():
         return self
 
     def __next__(self):
-        if self.compare_dates(self.endDate) >= 0:
+        if self.compare_dates(self.endDate) > 0:
             raise StopIteration
         current = self.currentDate
         self.increment()
