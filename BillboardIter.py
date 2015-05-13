@@ -1,5 +1,9 @@
 from datetime import date, timedelta
 
+__author__ = "James Wenzel"
+__license__ = "MIT"
+__email__ = "wenzel.james.r@gmail.com"
+
 
 class BillboardDates():
 
