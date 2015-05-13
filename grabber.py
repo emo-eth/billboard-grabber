@@ -2,7 +2,6 @@ import billboard
 from BillboardIter import BillboardIter
 import csv
 import json
-import FileNotFoundError
 from multiprocessing.pool import ThreadPool
 
 __author__ = "James Wenzel"
@@ -27,7 +26,7 @@ except FileNotFoundError as e:
 cache_updated = False  # keeps track of whether or not to writeout
 
 # create the date iterator
-dates = BillboardIter('2011-08-01', '2012-08-31')
+dates = BillboardIter('2011-05-01', '2012-07-31')
 
 # charts for us to load
 chartNames = ('hot-100', 'dance-club-play-songs', 'alternative-songs')
