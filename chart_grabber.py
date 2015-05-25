@@ -132,7 +132,7 @@ class top_songs(chart_grabber):
         Can be converted into a set of unique songs'''
         assert percent < 1 or percent < 100
         if percent >= 1:
-            percent = percent / 100
+            percent = percent / 100.0  # Python 2 needs .0 for double conversion
         top = []
         for chart in charts:
             entries = chart['entries']
