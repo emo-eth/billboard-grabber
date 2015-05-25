@@ -16,7 +16,7 @@ TODO:
 '''
 
 
-class chart_grabber():
+class chart_grabber(object):
 
     '''This doesn't do much on its own, but provides the base for more modular
     subclasses'''
@@ -119,12 +119,13 @@ class top_songs(chart_grabber):
     def __init__(self, start_date='1958-08-09', end_date=str(date.today()),
                  charts_to_load=('hot-100',), top_percent_of_chart=40,
                  outfile='results', cache_enabled=True):
-        super().__init__(start_date, end_date, charts_to_load, cache_enabled)
+        super(top_songs, self).__init__(start_date, end_date, charts_to_load,
+                                        cache_enabled)
         self.outfile = outfile
-        self.top_songs = list(set(self.get_top(self.weekly_charts,
-                                               top_percent_of_chart)))
-        self.top_songs.sort(key=lambda x: x[1])
-        self.write_csv(self.outfile, self.top_songs)
+        self.top = list(set(self.get_top(self.weekly_charts,
+                                         top_percent_of_chart)))
+        self.top.sort(key=lambda x: x[1])
+        self.write_csv(self.outfile, self.top)
 
     def get_top(self, charts, percent):
         '''Creates a list of title/name tuples.
@@ -132,14 +133,14 @@ class top_songs(chart_grabber):
         assert percent < 1 or percent < 100
         if percent >= 1:
             percent = percent / 100
-        top_songs = []
+        top = []
         for chart in charts:
             entries = chart['entries']
             for entry in range(int(len(entries) * percent)):
                 song = entries[entry]
-                top_songs.append((self.clean_song_name(song['title']),
-                                  self.clean_artist_name(song['artist'])))
-        return top_songs
+                top.append((self.clean_song_name(song['title']),
+                            self.clean_artist_name(song['artist'])))
+        return top
 
     def clean_artist_name(self, artist_name):
         '''Echonest is picky about featured artists'''
