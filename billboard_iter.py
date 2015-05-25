@@ -5,7 +5,7 @@ __license__ = "MIT"
 __email__ = "wenzel.james.r@gmail.com"
 
 
-class billboard_dates():
+class billboard_dates(object):
 
     '''Iterator over valid Billboard Chart weeks, which is
     supposed to be a per-class singleton for start quantization'''
@@ -21,6 +21,15 @@ class billboard_dates():
         return self
 
     def __next__(self):
+        '''Python 3 support'''
+        if self.compare_dates(self.end_date) > 0:
+            raise StopIteration
+        current = self.current_date
+        self.increment()
+        return current
+
+    def next(self):
+        '''Python 2 support'''
         if self.compare_dates(self.end_date) > 0:
             raise StopIteration
         current = self.current_date
@@ -56,7 +65,7 @@ class billboard_iter(billboard_dates):
 
     def __init__(self, start_date, end_date=date.today()):
         assert type(start_date) is str or type(start_date) is date
-        super().__init__(end_date)
+        super(billboard_iter, self).__init__(end_date)
         self.init_date = start_date
         if type(self.init_date) is not date:
             self.init_date = self.str_to_date(self.init_date)
