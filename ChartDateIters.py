@@ -5,17 +5,17 @@ __license__ = "MIT"
 __email__ = "wenzel.james.r@gmail.com"
 
 
-class billboard_dates(object):
+class ChartDates(object):
 
-    '''Iterator over valid Billboard Chart weeks, which is
-    supposed to be a per-class singleton for start quantization'''
+    '''Iterator over valid chart weeks'''
 
-    def __init__(self, end_date=date.today()):
-        assert type(end_date) is str or type(end_date) is date
+    def __init__(self, start_date, end_date=date.today()):
+        assert type(start_date) is date
+        assert type(end_date) is date or type(end_date) is str, "date or str"
         self.end_date = end_date
         if type(end_date) is not date:
             self.end_date = self.str_to_date(end_date)
-        self.current_date = date(1958, 8, 9)
+        self.current_date = start_date
 
     def __iter__(self):
         return self
@@ -57,15 +57,32 @@ class billboard_dates(object):
         return 0  # if they are equal
 
 
-class billboard_iter(billboard_dates):
+class BillboardDates(ChartDates):
+
+    '''Iterator over valid Billboard chart dates'''
+
+    def __init__(self, end_date=date.today()):
+        super(BillboardDates, self).__init__(date(1958, 8, 9), end_date)
+
+
+class SpotifyDates(ChartDates):
+
+    '''Iterator over valid Spotify chart dates'''
+
+    def __init__(self, end_date=date.today()):
+        super(SpotifyDates, self).__init__(date(2013, 4, 28), end_date)
+
+
+class BillboardIter(BillboardDates):
 
     '''Iterator over valid Billboard Chart weeks, which
     quantizes the start to the next valid date'''
-    _billboard_dates = billboard_dates()
 
-    def __init__(self, start_date, end_date=date.today()):
+    def __init__(self, start_date, end_date=date.today(),
+                 dateIter=BillboardDates):
         assert type(start_date) is str or type(start_date) is date
-        super(billboard_iter, self).__init__(end_date)
+        super(BillboardIter, self).__init__(end_date)
+        self._dates = dateIter()
         self.init_date = start_date
         if type(self.init_date) is not date:
             self.init_date = self.str_to_date(self.init_date)
@@ -78,8 +95,14 @@ class billboard_iter(billboard_dates):
 
     def quantize_start(self):
         '''Quantizes starting date to the closest following Billboard chart'''
-        bb_date = self._billboard_dates.current_date
+        bb_date = self._dates.current_date
         while self.compare_dates(bb_date) >= 0:  # get BB date up to start
-            bb_date = next(self._billboard_dates)
+            bb_date = next(self._dates)
         while self.compare_dates(bb_date) < 0:  # get start up to valid BB date
             self.increment(1)
+
+
+class SpotifyIter(BillboardIter):
+
+    def __init__(self, start_date, end_date=date.today()):
+        super(SpotifyIter, self).__init__(start_date, end_date, SpotifyDates)
