@@ -112,7 +112,7 @@ class TopSongs(ChartGrabber):
 
 
 class ChartLyrics(TopSongs):
-    '''removes featuring etc from song titles and artists'''
+    ''' will maybe eventually remove featuring etc from song titles and artists'''
 
     def __init__(self, start_date='1958-08-09', end_date=str(date.today()),
                  charts_to_load=('hot-100',), top_percent=40,
