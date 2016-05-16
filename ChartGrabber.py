@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import billboard
-from ChartDates import BillboardIter
+from ChartDateIters import BillboardIter
 import json
 from datetime import date
 from jwp.jwcache import jwcache
