@@ -1,15 +1,21 @@
 from datetime import date, timedelta
+import billboard
 
 __author__ = "James Wenzel"
 __license__ = "MIT"
 __email__ = "wenzel.james.r@gmail.com"
+
+try:
+    today = billboard.ChartData('hot-100').date
+except:
+    today = str(date.today())
 
 
 class ChartDates(object):
 
     '''Iterator over valid chart weeks'''
 
-    def __init__(self, start_date, end_date=date.today()):
+    def __init__(self, start_date, end_date=today):
         assert type(start_date) is date
         assert type(end_date) is date or type(end_date) is str, "date or str"
         self.end_date = end_date
@@ -36,6 +42,9 @@ class ChartDates(object):
         self.increment()
         return current
 
+    def __repr__(self):
+        return str(self.current_date)
+
     def str_to_date(self, string):
         year, month, day = string.split('-')
         return date(int(year), int(month), int(day))
@@ -43,9 +52,6 @@ class ChartDates(object):
     def increment(self, days=7):
         '''Serves as an abstraction barrier'''
         self.current_date = self.current_date + timedelta(days)
-
-    def __repr__(self):
-        return str(self.current_date)
 
     def compare_dates(self, dateObj):
         '''Returns 1 if current date is larger, 0 if equal, -1 if smaller'''
@@ -61,7 +67,7 @@ class BillboardDates(ChartDates):
 
     '''Iterator over valid Billboard chart dates'''
 
-    def __init__(self, end_date=date.today()):
+    def __init__(self, end_date=today):
         super(BillboardDates, self).__init__(date(1958, 8, 9), end_date)
 
 
@@ -69,7 +75,7 @@ class SpotifyDates(ChartDates):
 
     '''Iterator over valid Spotify chart dates'''
 
-    def __init__(self, end_date=date.today()):
+    def __init__(self, end_date=today):
         super(SpotifyDates, self).__init__(date(2013, 4, 28), end_date)
 
 
@@ -78,7 +84,7 @@ class BillboardIter(BillboardDates):
     '''Iterator over valid Billboard Chart weeks, which
     quantizes the start to the next valid date'''
 
-    def __init__(self, start_date, end_date=date.today(),
+    def __init__(self, start_date, end_date=today,
                  dateIter=BillboardDates):
         assert type(start_date) is str or type(start_date) is date
         super(BillboardIter, self).__init__(end_date)
@@ -104,5 +110,5 @@ class BillboardIter(BillboardDates):
 
 class SpotifyIter(BillboardIter):
 
-    def __init__(self, start_date, end_date=date.today()):
+    def __init__(self, start_date, end_date=today):
         super(SpotifyIter, self).__init__(start_date, end_date, SpotifyDates)

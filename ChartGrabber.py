@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import billboard
 from ChartDateIters import BillboardIter
@@ -22,13 +22,19 @@ TODO:
 
 '''
 
+try:
+    today = billboard.ChartData('hot-100').date
+    print(today)
+except:
+    today = str(date.today())
+
 
 class ChartGrabber(jwcsv, jwcache, jwmultithreaded):
 
     '''This doesn't do much on its own, but provides the base for more modular
     subclasses'''
 
-    def __init__(self, start_date='1958-08-09', end_date=str(date.today()),
+    def __init__(self, start_date='1958-08-09', end_date=today,
                  charts_to_load=('hot-100',), cache_enabled=True):
         self.dates = BillboardIter(start_date, end_date)
         self.charts_to_load = charts_to_load
@@ -36,7 +42,7 @@ class ChartGrabber(jwcsv, jwcache, jwmultithreaded):
             self.cache = self.load_cache('bbCache.json')
         else:
             self.cache = {}
-        self.multithread(self.get_chart, self.pool_args, processes=32)
+        self.safe_multithread(self.get_chart, self.pool_args, processes=20)
         if cache_enabled:
             self.write_cache('bbCache.json', self.cache)
 
@@ -86,7 +92,7 @@ class TopSongs(ChartGrabber):
     '''This particular subclass gets a set of all of the top xx percent of
     songs from included charts for a span of weeks'''
 
-    def __init__(self, start_date='1958-08-09', end_date=str(date.today()),
+    def __init__(self, start_date='1958-08-09', end_date=today,
                  charts_to_load=('hot-100',), top_percent=40,
                  outfile='results', cache_enabled=True):
         super(TopSongs, self).__init__(start_date, end_date, charts_to_load,
@@ -115,7 +121,7 @@ class ChartLyrics(TopSongs):
     ''' will maybe eventually remove featuring etc
     from song titles and artists '''
 
-    def __init__(self, start_date='1958-08-09', end_date=str(date.today()),
+    def __init__(self, start_date='1958-08-09', end_date=today,
                  charts_to_load=('hot-100',), top_percent=40,
                  outfile='results', cache_enabled=True):
         super(TopSongs, self).__init__(start_date, end_date, charts_to_load,
